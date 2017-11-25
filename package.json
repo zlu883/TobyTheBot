@@ -1,0 +1,23 @@
+{
+  "name": "tobythebot",
+  "version": "1.0.0",
+  "description": "MSA 2017 Advanced Training",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlu883/TobyTheBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zlu883/TobyTheBot/issues"
+  },
+  "homepage": "https://github.com/zlu883/TobyTheBot#readme",
+  "dependencies": {
+    "botbuilder": "^3.12.0",
+    "restify": "^6.3.4"
+  }
+}
