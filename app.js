@@ -18,6 +18,11 @@ var connector = new builder.ChatConnector({
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
 
+server.get('/', restify.plugins.serveStatic({
+    directory: __dirname,
+    default: '/index.html'
+}));
+
 // Receive messages from the user
 var bot = new builder.UniversalBot(connector, function (session) {
     bot.send("Hello! I am Toby, the Contoso Bank chatbot");
