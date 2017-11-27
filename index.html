@@ -37,9 +37,6 @@
 	<meta name="twitter:url" content="" />
 	<meta name="twitter:card" content="" />
 
-	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-	<link rel="shortcut icon" href="favicon.ico">
-
 	<!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'> -->
 	
 	<!-- Animate.css -->
@@ -58,7 +55,28 @@
 	<!-- FOR IE9 below -->
 	<!--[if lt IE 9]>
 	<script src="js/respond.min.js"></script>
-	<![endif]-->
+    <![endif]-->
+    
+    <script type="text/javascript">
+        function openChat() {
+            var chatFrame = document.getElementById("chat-frame");
+            chatFrame.style.display = "block";
+            var closeButton = document.getElementById("close-button");
+            closeButton.style.display = "block";
+            var chatButton = document.getElementById("chat-button");
+            chatButton.style.right = "305px";
+            chatButton.onclick = function(){ closeChat() };
+        }
+        function closeChat() {
+            var chatFrame = document.getElementById("chat-frame");
+            chatFrame.style.display = "none";
+            var closeButton = document.getElementById("close-button");
+            closeButton.style.display = "none";
+            var chatButton = document.getElementById("chat-button");
+            chatButton.style.right = "0px";
+            chatButton.onclick = function(){ openChat() };
+        }
+    </script>
 
 	</head>
 	<body>
@@ -69,7 +87,6 @@
 		<div class="container">
 			<div class="header-inner">
 				<img src="images/ContosoLogo.png">
-				<!-- <h1><a href="#"><span id="logo1">C</span><span id="logo2">o</span><span id="logo3">n</span><span id="logo4">t</span><span id="logo5">o</span><span id="logo6">s</span><span id="logo7">o</span></a></h1> -->
 				<nav role="navigation">
 					<ul>
 						<li><a href="#">Personal</a></li>
@@ -96,37 +113,22 @@
 		   				<div class="slider-text-inner">
 							<h2>Welcome to Contoso</h2>
 							<h3 id="subtitle">An award-winning bank that strives to consistently provide our customers with outstanding service and innovative financial solutions </h3>							   
-		   					<p><a href="#" class="btn btn-primary btn-lg">Get started</a></p>
+		   					<p><a href="#" class="btn btn-primary btn-lg" onclick="openChat()">Check out Toby, our new chatbot &#8594</a></p>
 		   				</div>
 		   			</div>
 		   		</div>
 		   	</li>
-		   	<!-- <li style="background-image: url(images/slide_3.jpg);">
-		   		<div class="container">
-		   			<div class="col-md-10 col-md-offset-1 text-center js-fullheight slider-text">
-		   				<div class="slider-text-inner">
-		   					<h2>Take Your Business To The Next Level</h2>
-		   					<p><a href="#" class="btn btn-primary btn-lg">Get started</a></p>
-		   				</div>
-		   			</div>
-		   		</div>
-		   	</li>
-		   	<li style="background-image: url(images/slide_2.jpg);">
-		   		<div class="container">
-		   			<div class="col-md-10 col-md-offset-1 text-center js-fullheight slider-text">
-		   				<div class="slider-text-inner">
-		   					<h2>We Think Different That Others Can't</h2>
-		   					<p><a href="#" class="btn btn-primary btn-lg">Get started</a></p>
-		   				</div>
-		   			</div>
-		   		</div>
-		   	</li> -->
 		  	</ul>
 	  	</div>
 	</aside>
 	
-	</div>
-	
+    </div>
+    
+    <div id="chat">
+        <img id="chat-button" src="images/TobyIcon.png" onclick="openChat()"/>            
+        <iframe id="chat-frame" src='https://webchat.botframework.com/embed/TobyTheContosoBot?s=23_Srhx3Ky8.cwA.fxU.F-Z7v7bQ5OmZiSuZ5V_PrXC6CF6wncInjlLE2Ef_Mcs'></iframe>
+        <img id="close-button" src="images/CloseIcon.png" onclick="closeChat()" /> -->
+    </div>
 	
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
