@@ -12,9 +12,9 @@ exports.initializeBot = function (connector) {
         //     customVision.identifyBranch(session);
         // }
 
-        if (msg.attachments && msg.attachments.length > 0) {
+        if (session.message.attachments && session.message.attachments.length > 0) {
             // Echo back attachment
-            var attachment = msg.attachments[0];
+            var attachment = session.message.attachments[0];
             session.send(attachment.contentType + " ||| " + attachment.contentUrl + " ||| " + attachment.contentName);
         } 
 
