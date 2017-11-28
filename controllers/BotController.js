@@ -7,16 +7,10 @@ exports.initializeBot = function (connector) {
         
     // Create bot
     var bot = new builder.UniversalBot(connector, function (session) {
-        // if ((session.message.attachments && session.message.attachments.length > 0)) {
-        //     console.log(session.message.attachments);
-        //     customVision.identifyBranch(session);
-        // }
-
-        if (session.message.attachments && session.message.attachments.length > 0) {
-            // Echo back attachment
-            var attachment = session.message.attachments[0];
-            session.send(attachment.contentType + " ||| " + attachment.contentUrl + " ||| " + attachment.contentName);
-        } 
+        if ((session.message.attachments && session.message.attachments.length > 0)) {
+             console.log(session.message.attachments);
+             customVision.identifyBranch(session);
+        }
 
         session.message.address.bot.name = "Toby";
         session.send("Hello! I am Toby, the Contoso Bank chatbot");

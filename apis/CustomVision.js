@@ -9,7 +9,7 @@ exports.identifyBranch = function (session){
             'Content-Type': 'application/json',
             'Prediction-Key': 'f54f43d9c86d42608a75adedbd4fc737'
         },
-        body: { 'Url': "http://www.peddlethorp.co.nz/assets/Uploads/Westpac-Charter-House-02.jpg" }
+        body: { 'Url': session.message.attachments[0].contentUrl }
     }, function(error, response, body){
         console.log(error);
         console.log(body);        
