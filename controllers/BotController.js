@@ -66,10 +66,10 @@ exports.initializeBot = function (connector) {
     bot.dialog('SendFeedback', [
         function (session, args, next) {
             session.message.address.bot.name = "Toby";                    
-            builder.Prompts.choice(session, "Which branch do you want to give feedback on?", "Just Contoso Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload a photo of the branch", { listStyle: builder.ListStyle.button });            
+            builder.Prompts.choice(session, "Which branch do you want to give feedback on?", "Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload photo of branch", { listStyle: builder.ListStyle.button });            
         },
         function (session, results, next) {
-            if (results.response.entity == "Just Contoso Bank in general") {
+            if (results.response.entity == "Bank in general") {
                 session.dialogData.branchName = "General";                
             }
             else {
@@ -98,10 +98,10 @@ exports.initializeBot = function (connector) {
     bot.dialog('SeeFeedback', [
         function (session, args, next) {
             session.message.address.bot.name = "Toby";                    
-            builder.Prompts.choice(session, "Which branch do you want to see feedback on?", "Just Contoso Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload a photo of the branch", { listStyle: builder.ListStyle.button });            
+            builder.Prompts.choice(session, "Which branch do you want to see feedback on?", "Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload photo of branch", { listStyle: builder.ListStyle.button });            
         },
         function (session, results, next) {
-            if (results.response.entity == "Just Contoso Bank in general") {
+            if (results.response.entity == "Bank in general") {
                 session.send("Retrieving feedbacks for Contoso in general...")                
             }
             else {
