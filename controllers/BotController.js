@@ -7,11 +7,8 @@ exports.initializeBot = function (connector) {
         
     // Create bot
     var bot = new builder.UniversalBot(connector, function (session) {
-        if ((session.message.attachments && session.message.attachments.length > 0)) {
-             console.log(session.message.attachments);
-             customVision.identifyBranch(session);
-        }
-
+        
+        // Default dialog for handling all unrecognized user inputs
         session.message.address.bot.name = "Toby";
         session.send("Hello! I am Toby, the Contoso Bank chatbot");
         session.send("I am still at the testing stage and can only help you with the following:\n\n- Find exchange rate between two currencies\n- See feedback about Contoso\n- Give feedback on Contoso");
@@ -21,16 +18,16 @@ exports.initializeBot = function (connector) {
     var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/98da5859-9a47-4260-9c55-c0680414913f?subscription-key=4307015bdfd546d9891e69118fb0bd1a&verbose=true&timezoneOffset=0&q=');
     bot.recognizer(recognizer);
 
+    // Dialog for retrieving exchange rates
     bot.dialog('GetExchangeRateSpecific', function (session, args) {
+        
         session.message.address.bot.name = "Toby";        
         session.send("Retrieving exchange rate...");        
-        console.log(args);
 
         // Retrieve entities from LUIS analysis
         var fromCurrencyType = builder.EntityRecognizer.findEntity(args.intent.entities, 'FromCurrencyType');
         var toCurrencyType = builder.EntityRecognizer.findEntity(args.intent.entities, 'ToCurrencyType');
         var baseCurrencyAmount = builder.EntityRecognizer.findEntity(args.intent.entities, 'builtin.number');
-        console.log(baseCurrencyAmount);            
 
         // Calculates equivalent value for specific amount of base currency
         if (fromCurrencyType && toCurrencyType && baseCurrencyAmount) {
@@ -45,7 +42,7 @@ exports.initializeBot = function (connector) {
                             equivalentValue, toCurrencyType.entity.toUpperCase());                                            
                     }
                     else {
-                        session.send("Either your currency code is invalid or is not supported. Please try again")
+                        session.send("Either your currency code is invalid or is not supported. Please try again");
                     }
                 });                   
             }
@@ -58,30 +55,54 @@ exports.initializeBot = function (connector) {
                         toCurrencyType.entity.toUpperCase());
                 }
                 else {
-                    session.send("Either your currency code is invalid or is not supported. Please try again")
+                    session.send("Either your currency code is invalid or is not supported. Please try again");
                 }          
             });                    
         }
         else {
             session.send("I didn't get the currency types you specified. Please try again using the standard currency codes (e.g. \"USD\" for US dollars)");
         }
+
+        session.endDialog();
+
     }).triggerAction({
         matches: 'GetExchangeRateSpecific'
     });
 
+    // Dialog for sending feedback
     bot.dialog('SendFeedback', [
         function (session, args, next) {
             session.message.address.bot.name = "Toby";                    
             builder.Prompts.choice(session, "Which branch do you want to give feedback on?", "Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload photo of branch", { listStyle: builder.ListStyle.button });            
         },
         function (session, results, next) {
-            if (results.response.entity == "Bank in general") {
-                session.dialogData.branchName = "General";                
+            if (results.response.entity == "Upload photo of branch") {
+                session.beginDialog("AskForPhoto");
+            }
+            else if (results.response.entity == "Bank in general") {
+                session.dialogData.branchName = "General";
+                next();                
             }
             else {
-                session.dialogData.branchName = results.response.entity;
+                session.dialogData.branchName = results.response.entity;                
+                next();               
             }
-            builder.Prompts.text(session, "Got it, please tell us your opinions:");
+        },
+        function (session, results, next) {
+            console.log(results);            
+            if (results.predictedBranch) {
+                if (results.predictedBranch == "Error") {
+                    session.send("Sorry, I can't identify your branch. Please try again.");
+                    session.replaceDialog("SendFeedback");
+                }
+                else {
+                    session.dialogData.branchName = results.predictedBranch; 
+                    builder.Prompts.text(session, "Got it, your branch is " + results.predictedBranch + ", please tell us your opinions:");
+                }                                                
+            } 
+            else {
+                builder.Prompts.text(session, "Got it, please tell us your opinions:");                                
+            }
         },
         function (session, results, next) {
             session.send("Receiving your feedback...");            
@@ -211,4 +232,18 @@ exports.initializeBot = function (connector) {
     ]).triggerAction({
         matches: 'DeleteFeedback'
     });
+
+    // Separate dialog for identifying branch photos
+    bot.dialog('AskForPhoto', [
+        function (session) {
+            builder.Prompts.attachment(session, "Please send me a photo with the street view of the branch:");
+        },
+        function (session, results) {
+            session.send("Identifying branch...");
+            customVision.identifyBranch(results.response.contentUrl, function(predictedBranch) {
+                results.predictedBranch = predictedBranch; 
+                session.endDialogWithResult(results);                                                   
+            });
+        }
+    ]);
 }
