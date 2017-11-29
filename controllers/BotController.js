@@ -11,7 +11,7 @@ exports.initializeBot = function (connector) {
         // Default dialog for handling all unrecognized user inputs
         session.message.address.bot.name = "Toby";
         session.send("Hello! I am Toby, the Contoso Bank chatbot");
-        session.send("I am still at the testing stage and can only help you with the following:\n\n- Find exchange rate between two currencies\n- See feedback about Contoso\n- Give feedback on Contoso");
+        session.send("I am still at the testing stage and can only help you with the following:\n\n- Find exchange rate between two currencies (e.g. \"Convert 100 USD to EUR\")\n- Give / view feedback about Contoso branches");
     });
 
     // Attach LUIS recognizer
@@ -132,12 +132,12 @@ exports.initializeBot = function (connector) {
                 session.beginDialog("AskForPhoto");
             }
             else if (results.response.entity == "Bank in general") {
-                session.send("Retrieving feedbacks for Contoso in general...");
+                session.send("Retrieving feedback for Contoso in general...");
                 session.dialogData.branchName = "General";                
                 next();                
             }
             else {
-                session.send("Retrieving feedbacks for %s...", results.response.entity);
+                session.send("Retrieving feedback for %s...", results.response.entity);
                 session.dialogData.branchName = results.response.entity;                
                 next();                                
             }
@@ -149,6 +149,7 @@ exports.initializeBot = function (connector) {
                     session.replaceDialog("SeeFeedback");
                 }
                 else {
+                    session.send("This is the %s branch. Retrieving its feedback...", results.predictedBranch)
                     session.dialogData.branchName = results.predictedBranch; 
                 }                                                
             } 
@@ -252,7 +253,7 @@ exports.initializeBot = function (connector) {
         matches: 'DeleteFeedback'
     });
 
-    // Separate dialog for identifying branch photos
+    // Separate dialog for asking for attachments
     bot.dialog('AskForPhoto', [
         function (session) {
             builder.Prompts.attachment(session, "Please send me a photo with the street view of the branch:");
