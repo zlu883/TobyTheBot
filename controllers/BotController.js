@@ -89,7 +89,6 @@ exports.initializeBot = function (connector) {
             }
         },
         function (session, results, next) {
-            console.log(results);            
             if (results.predictedBranch) {
                 if (results.predictedBranch == "Error") {
                     session.send("Sorry, I can't identify your branch. Please try again.");
@@ -122,18 +121,37 @@ exports.initializeBot = function (connector) {
         matches: 'SendFeedback'
     });
 
+    // Dialog for viewing feedback
     bot.dialog('SeeFeedback', [
         function (session, args, next) {
             session.message.address.bot.name = "Toby";                    
             builder.Prompts.choice(session, "Which branch do you want to see feedback on?", "Bank in general|Queen Street|Newmarket|Wynyard Quarters|Upload photo of branch", { listStyle: builder.ListStyle.button });            
         },
         function (session, results, next) {
-            if (results.response.entity == "Bank in general") {
-                session.send("Retrieving feedbacks for Contoso in general...")                
+            if (results.response.entity == "Upload photo of branch") {
+                session.beginDialog("AskForPhoto");
+            }
+            else if (results.response.entity == "Bank in general") {
+                session.send("Retrieving feedbacks for Contoso in general...");
+                session.dialogData.branchName = "General";                
+                next();                
             }
             else {
-                session.send("Retrieving feedbacks for %s...", results.response.entity);                                
+                session.send("Retrieving feedbacks for %s...", results.response.entity);
+                session.dialogData.branchName = results.response.entity;                
+                next();                                
             }
+        },
+        function (session, results, next) {
+            if (results.predictedBranch) {
+                if (results.predictedBranch == "Error") {
+                    session.send("Sorry, I can't identify your branch. Please try again.");
+                    session.replaceDialog("SeeFeedback");
+                }
+                else {
+                    session.dialogData.branchName = results.predictedBranch; 
+                }                                                
+            } 
 
             contosoDatabase.getContosoFeedback(function(getResults) {
                 
@@ -144,7 +162,7 @@ exports.initializeBot = function (connector) {
 
                     //console.log(getResults);
                     for (x in getResults) {
-                        if (getResults[x].branchName == results.response.entity) {
+                        if (getResults[x].branchName == session.dialogData.branchName) {
                             attachment.push(new builder.HeroCard(session)
                                 .title((getResults[x].createdAt.split("T"))[0])
                                 .text(getResults[x].feedback));
@@ -169,6 +187,7 @@ exports.initializeBot = function (connector) {
         matches: 'SeeFeedback'
     });
 
+    // Dialog for deleting feedback
     bot.dialog('DeleteFeedback', [
         function (session, args, next) {
             session.message.address.bot.name = "Toby";

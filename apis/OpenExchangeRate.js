@@ -1,5 +1,6 @@
 var request = require('request');
 
+// NOT USED
 exports.getCurrencyList = function (callback){
 
     request.get("https://openexchangerates.org/api/currencies.json?app_id=ca835d6b079449cf915a03993f0938ed", function (err,res,body){
