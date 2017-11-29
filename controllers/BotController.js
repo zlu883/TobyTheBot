@@ -242,6 +242,7 @@ exports.initializeBot = function (connector) {
             session.send("Identifying branch...");
             customVision.identifyBranch(results.response.contentUrl, function(predictedBranch) {
                 results.predictedBranch = predictedBranch; 
+                session.send(results.response.contentUrl);
                 session.endDialogWithResult(results);                                                   
             });
         }
