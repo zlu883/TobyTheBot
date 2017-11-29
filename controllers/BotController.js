@@ -240,9 +240,8 @@ exports.initializeBot = function (connector) {
         },
         function (session, results) {
             session.send("Identifying branch...");
-            customVision.identifyBranch(results.response.contentUrl, function(predictedBranch) {
+            customVision.identifyBranch(results.response[0].contentUrl, function(predictedBranch) {
                 results.predictedBranch = predictedBranch; 
-                session.send(results.response.contentUrl);
                 session.endDialogWithResult(results);                                                   
             });
         }
